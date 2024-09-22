@@ -2,14 +2,14 @@
 
 ## なにこれ
   2011年にMoviendo様から発売された、18禁PC向けノベルゲーム'[処女回路](https://web.archive.org/web/20160730000957fw_/http://www.moviendo-soft.com:80/otm_s/top.php)'を<br>
-  ONScripter形式へ変換するためのコンバータです<br>
+  ONScripter形式へ変換するためのコンバータ...の予定です<br>
 
 ## 再現度
 原作との主な違いは以下
  - セーブ/ロード画面は超簡略化
 
 ## 使い方
-※先に[修正パッチ](https://web.archive.org/web/20160923014453fw_/http://lapislazuli-svr.sakura.ne.jp/movi_d/otm_rev_1_1.zip)を当てておいてください
+※[修正パッチ](https://web.archive.org/web/20160923014453fw_/http://lapislazuli-svr.sakura.ne.jp/movi_d/otm_rev_1_1.zip)は使わなくても問題ありません
  1. 適当な作業フォルダを作成
  2. [GARBro](https://drive.google.com/file/d/1gH9nNRxaz8GexN0B1hWyUc3o692bkWXX/view)でdata.xp3を作業フォルダへ展開<br>
 
@@ -23,7 +23,7 @@
     変換前の時点で以下のような構成になっていればOKです↓<br>
 ```
 ```
- 4. ウィンドウが消え、0.txtができれば完成<br>
+ 1. ウィンドウが消え、0.txtができれば完成<br>
     exe等の不要データを削除し、変換済みファイルと共に利用ハードへ転送
 
 ## 注意事項
