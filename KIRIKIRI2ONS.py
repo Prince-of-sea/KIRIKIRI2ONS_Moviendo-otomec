@@ -11,7 +11,7 @@ def default_txt():
 
 caption "処女回路 for ONScripter"
 
-rmenu "Ｓａｖｅ",save,"Ｌｏａｄ",load,"Ｓｋｉｐ",skip,"Ｌｏｇ",lookback,"Ｃｌｏｓｅ",windowerase,"Ｔｉｔｌｅ",reset
+rmenu "ＳＡＶＥ",save,"ＬＯＡＤ",load,"ＳＫＩＰ",skip,"ＬＯＧ",lookback,"ＴＩＴＬＥ",reset
 ;rmenu "セーブ",save,"ロード",load,"リセット",reset
 
 savenumber 18
@@ -23,23 +23,36 @@ nsa
 humanz 10
 windowback
 
-numalias videopath,190
+
+;str用
+numalias sename,190
+
+;num用
+numalias evmode,190
 
 effect 10,10,500
 ;<<-EFFECT->>
 
-
+defsub tatireset
 defsub msgName
+defsub seplay
+defsub voplay
+defsub sestopwait
 
 game
 ;----------------------------------------
+;立ち絵リセット
+*tatireset
+	vsp 2,0:vsp 3,0:vsp 4,0
+return
+
 ;キャラ名中央表示用座標取得
 *msgName
 	getparam $1
 
 	;文字24px+幅2px=26px
 	;len取得数/2=文字数(一文字で2判定っぽい)
-	;文字数x28px-2px=名前全体の文字サイズ
+	;文字数x26px-2px=名前全体の文字サイズ
 
 	;キャラ名windowの横幅は165px
 	;(キャラ名windowの横幅-名前全体の文字サイズ)/2=X座標
@@ -47,13 +60,133 @@ game
 	len %1,$1
 	mov %2,180+(165/2)-((%1/2)*(24+2)-2)/2
 
-	lsp 1,"data\gui\sys_namebox_bg.png",180,420
-	strsp 0,$1,%2,423,7,1,24,24,2,3,0,1
+	lsp 6,"gui/sys_namebox_bg.png",180,420
+	strsp 5,$1,%2,423,7,1,24,24,2,3,0,1
+
+	;フェイス非表示
+	tatireset
+
 return
 
+;ボイス再生&フェイス
+*voplay
+	getparam $1
+	dwave 0,"voice/"+$1+".ogg"
+
+	;event画像表示時フェイス非表示
+	if %evmode==1 vsp 2,0:vsp 3,0:vsp 4,0:return
+
+	;$1の先頭から3文字を$2に格納する
+	mid $2,$1,0,3
+
+	if $2=="min" vsp 2,1:vsp 3,0:vsp 4,0
+	if $2=="ali" vsp 2,0:vsp 3,1:vsp 4,0
+	if $2=="sal" vsp 2,0:vsp 3,0:vsp 4,1
+
+return
+
+;効果音再生
+*seplay
+	getparam $1
+
+	fileexist %1,"se/"+$1+".ogg"
+	if %1==1 dwave 1,"se/"+$1+".ogg"
+	if %1==0 dwave 1,"se/"+$1+".wav"
+
+	mov $sename,$1
+
+	resettimer
+return
+
+;効果音停止待ち
+*sestopwait
+	if $sename=="_sys_se_onenter2" mov %1,204
+	if $sename=="se11" mov %1,1544
+	if $sename=="se14" mov %1,413
+	if $sename=="se18" mov %1,227
+	if $sename=="se_bell01" mov %1,3631
+	if $sename=="se_bgm_o_end" mov %1,114442
+	if $sename=="se_bird01" mov %1,4783
+	if $sename=="se_bird02" mov %1,3169
+	if $sename=="se_book01" mov %1,444
+	if $sename=="se_chime01" mov %1,3657
+	if $sename=="se_chime02" mov %1,15975
+	if $sename=="se_cloth01" mov %1,1795
+	if $sename=="se_cloth02" mov %1,766
+	if $sename=="se_cloth03" mov %1,2740
+	if $sename=="se_cloth04" mov %1,2310
+	if $sename=="se_clothing01" mov %1,3321
+	if $sename=="se_clothing02" mov %1,3111
+	if $sename=="se_clothing03" mov %1,9330
+	if $sename=="se_dish01" mov %1,1167
+	if $sename=="se_door01" mov %1,7314
+	if $sename=="se_door01_1" mov %1,1921
+	if $sename=="se_door01_2" mov %1,2403
+	if $sename=="se_door02" mov %1,4750
+	if $sename=="se_door03" mov %1,6817
+	if $sename=="se_door03_1" mov %1,2653
+	if $sename=="se_door03_2" mov %1,1248
+	if $sename=="se_door04" mov %1,2827
+	if $sename=="se_door05" mov %1,2467
+	if $sename=="se_door06" mov %1,2037
+	if $sename=="se_door07" mov %1,1625
+	if $sename=="se_dosa01" mov %1,1018
+	if $sename=="se_gata01" mov %1,3761
+	if $sename=="se_gata02" mov %1,2142
+	if $sename=="se_gata03" mov %1,287
+	if $sename=="se_gu-01" mov %1,1080
+	if $sename=="se_hyu-01" mov %1,4388
+	if $sename=="se_ippon" mov %1,3918
+	if $sename=="se_kagi" mov %1,940
+	if $sename=="se_knob01" mov %1,708
+	if $sename=="se_knock01" mov %1,757
+	if $sename=="se_knock02" mov %1,2628
+	if $sename=="se_knock03" mov %1,757
+	if $sename=="se_knock04" mov %1,914
+	if $sename=="se_kumo01" mov %1,2556
+	if $sename=="se_moku" mov %1,943
+	if $sename=="se_nagu01" mov %1,1541
+	if $sename=="se_nagu02" mov %1,3552
+	if $sename=="se_nagu03" mov %1,522
+	if $sename=="se_nagu04" mov %1,1697
+	if $sename=="se_onclick3" mov %1,250
+	if $sename=="se_onenter3" mov %1,960
+	if $sename=="se_piki01" mov %1,4101
+	if $sename=="se_tell01" mov %1,15960
+	if $sename=="se_tell02" mov %1,3162
+	if $sename=="se_tell03" mov %1,115
+	if $sename=="se_water01" mov %1,7133
+	if $sename=="se_ちゃきーん" mov %1,1224
+	if $sename=="se_キーボード1" mov %1,7056
+	if $sename=="se_キーボード2" mov %1,3302
+	if $sename=="se_ドア閉める音" mov %1,580
+	if $sename=="se_ドア開ける音" mov %1,768
+	if $sename=="se_ドォォォン！" mov %1,4481
+	if $sename=="se_ドンッ！" mov %1,175
+	if $sename=="se_バチバチバチバチッ！" mov %1,1871
+	if $sename=="se_プシュー" mov %1,1350
+	if $sename=="se_雷1" mov %1,2304
+	if $sename=="se_魔法2" mov %1,1373
+	if $sename=="sys_se_novoice" mov %1,207
+	if $sename=="sys_se_onclick" mov %1,338
+	if $sename=="sys_se_onclick2" mov %1,349
+	if $sename=="sys_se_onclick3" mov %1,146
+	if $sename=="sys_se_onenter" mov %1,46
+	if $sename=="sys_se_onenter2" mov %1,207
+	if $sename=="sys_se_slider" mov %1,18
+	if $sename=="sys_se_slider2" mov %1,22
+
+	*sestopwait_loop
+		gettimer %2
+		if %2>=%1 goto *sestopwait_end
+		wait 1
+	goto *sestopwait_loop
+
+	*sestopwait_end
+return
 ;----------------------------------------
 *start
-setwindow 190,480,24,3,24,24,0,5,15,1,1,"data/gui/sys_textwindow_bg.png",0,343
+setwindow 190,480,24,3,24,24,0,5,15,1,1,"gui/sys_textwindow_bg.png",0,343
 
 bg black,1
 goto *SYS_MAIN_KS
@@ -86,6 +219,7 @@ def dir_check(path_list):
 	return CHK
 
 
+#画像と長さからエフェクト番号自動生成
 def effect_edit(t,f,effect_startnum,effect_list):
 
 	list_num=0
@@ -121,11 +255,20 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 	#default.txtを読み込み
 	txt = default_txt()
 
-	#
+	#変換ksリスト
 	ks_list = [
 		{'name':'sys_main.ks', 'encoding':'cp932'},
 		{'name':'s_001_prologue.ks', 'encoding':'utf-16'},
-
+		{'name':'s_002_day1.ks', 'encoding':'utf-16'},
+		{'name':'s_002_day2.ks', 'encoding':'utf-16'},
+		{'name':'s_002_day3.ks', 'encoding':'utf-16'},
+		{'name':'s_002_day4.ks', 'encoding':'utf-16'},
+		{'name':'s_002_day5.ks', 'encoding':'utf-16'},
+		{'name':'s_002_day6.ks', 'encoding':'utf-16'},
+		{'name':'s_003_end_alicia.ks', 'encoding':'utf-16'},
+		{'name':'s_003_end_minato.ks', 'encoding':'utf-16'},
+		{'name':'s_003_end_normal.ks', 'encoding':'utf-16'},
+		{'name':'s_003_end_sala.ks', 'encoding':'utf-16'},
 	]
 
 	for di in ks_list:
@@ -148,6 +291,10 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 			fr = fr.replace(r'[', '\n[')
 			fr = fr.replace(r']', ']\n')
 
+		#patch修正分
+		if (di['name'] == 's_001_prologue.ks'):
+			fr = fr.replace('間接', '関節')
+
 		#デコード済みtxt一つごとに開始時改行&サブルーチン化
 		if DEBUG_MODE: txt += '\n;--------------- '+ str(p.parent.name) + ' - ' + str(p.name) +' ---------------'
 		txt += ('\n*'+ str(p.name).upper().replace(r'.', r'_') +'\n')
@@ -160,6 +307,7 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 
 			#空行ではない場合のみ処理
 			if line:
+
 				#スクリプト処理
 				if mode_iscript:
 					if (line == r'@endscript'):
@@ -197,15 +345,6 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 					elif (kr_cmd == 'return'):
 						txt += ('return\n')
 
-					#動画開ける
-					elif (kr_cmd == 'openvideo'):
-						storage = str(d['storage'])
-						txt += (r'mov $videopath,"' + storage.replace('\'', '').replace(r'&system.exepath+', '') + '"\n' )
-
-					#動画再生
-					elif (kr_cmd == 'playvideo'):
-						txt += (r'mpegplay $videopath' + '\n')
-
 					#待ち
 					elif (kr_cmd == 'wait'):
 						time = str(d['time'])
@@ -215,19 +354,65 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 					#背景(スプライト管理)
 					elif (kr_cmd == 'bg'):
 						storage = str(d['storage'])
-						txt += (r'lsp 255,"data/bg/' + storage + '.png"\n')
+						txt += (r'lsp 255,"bg/' + storage + '.png":mov %evmode,0:tatireset\n')
 
 					#背景(スプライト管理)
 					elif (kr_cmd == 'イベント絵'):
 						storage = str(d['storage'])
-						txt += (r'lsp 255,"data/ev/' + storage + '.png"\n')
+						txt += (r'lsp 255,"ev/' + storage + '.png":mov %evmode,1:tatireset\n')
 
 					#変更
 					elif (kr_cmd == 'tra'):
 						rule = str(d.get('rule')) if d.get('rule') else 'fade'
-						time = str(d.get('time')) if d.get('time') else '1000'
+						time = str(d.get('time')) if d.get('time') else '500'
 						s1, effect_startnum, effect_list = effect_edit(time, rule, effect_startnum, effect_list)
 						txt += ('print '+ s1 + '\n')
+
+					#bgm
+					elif (kr_cmd == 'bgm'):
+						storage = str(d['storage'])
+						txt += (r'bgm "bgm/' + storage + '.ogg"\n')
+
+					#音楽
+					elif (kr_cmd == '音楽'):
+						storage = str(d['storage'])
+						txt += (r'bgm "bgm/' + storage + '.ogg"\n')
+
+					#音楽切替
+					elif (kr_cmd == '音楽切替'):
+						storage = str(d['storage'])
+						txt += (r'bgm "bgm/' + storage + '.ogg"\n')
+
+					#音楽停止
+					elif (kr_cmd == '音楽停止'):
+						txt += ('bgmstop\n')
+
+					#音楽フェードアウト - めんどいので停止
+					elif (kr_cmd == '音楽フェードアウト'):
+						time = str(d.get('time')) if d.get('time') else '500'
+						txt += ('wait ' + time + ':bgmstop\n')
+
+					#voice
+					elif (kr_cmd == 'voice'):
+						storage = str(d['storage'])
+						txt += (r'voplay "' + storage.lower() + '"\n')
+
+					#効果音
+					elif (kr_cmd == '効果音'):
+						storage = str(d['storage'])
+						txt += (r'seplay "' + storage.lower() + '"\n')
+
+					#効果音フェードアウト - めんどいので停止
+					elif (kr_cmd == '効果音停止'):
+						txt += ('dwavestop 1\n')
+
+					#効果音停止
+					elif (kr_cmd == '効果音停止'):
+						txt += ('dwavestop 1\n')
+
+					#効果音停止待ち
+					elif (kr_cmd == '効果音停止待ち'):
+						txt += ('sestopwait\n')
 
 					#名前欄
 					elif (kr_cmd == 'name'):
@@ -236,38 +421,155 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 
 					#名前欄消す
 					elif (kr_cmd == 'x'):
-						txt += ('csp 0:csp 1\n')
+						txt += ('csp 5:csp 6:tatireset\n')#名前window削除&フェイス非表示
 
-					#bgm
-					elif (kr_cmd == 'bgm'):
-						storage = str(d['storage'])
-						txt += (r'bgm "data/bgm/' + storage + '.ogg"\n')
+					#画面左下フェイス
+					elif (kr_cmd == 'face'):
+						name = str(d['name'])
+						costume = str(d['costume'])
+						face = str(d['face'])
+						pose = str(d['pose'])
 
-					#音楽停止
-					elif (kr_cmd == '音楽停止'):
-						txt += ('bgmstop\n')
+						if name=='min':
+							txt += (r'lsph 2,"face/face_' + name + '_' + pose + '_' + costume + '_' + face + '.png",-305,358\n')
+						elif name=='ali':
+							txt += (r'lsph 3,"face/face_' + name + '_' + pose + '_' + costume + '_' + face + '.png",-305,358\n')
+						elif name=='sal':
+							txt += (r'lsph 4,"face/face_' + name + '_' + pose + '_' + costume + '_' + face + '.png",-305,358\n')
+						else:
+							print('ERROR: no face')
+					
+					#暗転
+					elif (kr_cmd == '暗転'):
+						#win = str(d['win'])#たまにwin="true"表記 用途不明
+						rule = str(d.get('rule')) if d.get('rule') else 'fade'
+						time = str(d.get('time')) if d.get('time') else '1500'
+						s1, effect_startnum, effect_list = effect_edit(time, rule, effect_startnum, effect_list)
+						txt += ('lsp 255,"gui/sys_bg_black.png":csp 5:csp 6:mov %evmode,0:tatireset:print '+ s1 + '\n')
 
-					#voice
-					elif (kr_cmd == 'voice'):
-						storage = str(d['storage'])
-						txt += (r'dwave 1,"data/voice/' + storage + '.ogg"\n')
+					#白転
+					elif (kr_cmd == '白転'):
+						#win = str(d['win'])#たまにwin="true"表記 用途不明
+						rule = str(d.get('rule')) if d.get('rule') else 'fade'
+						time = str(d.get('time')) if d.get('time') else '1500'
+						s1, effect_startnum, effect_list = effect_edit(time, rule, effect_startnum, effect_list)
+						txt += ('lsp 255,"gui/sys_bg_white.png":csp 5:csp 6:mov %evmode,0:tatireset:print '+ s1 + '\n')
 
-					#効果音 - 待ち用に関数作って飛ばす、関数先ではresettimer
-					elif (kr_cmd == '効果音'):
-						storage = str(d['storage'])
-						pass #仮
+					#フラッシュ
+					elif (kr_cmd == 'フラッシュ'):
+						time = str(d.get('time')) if d.get('time') else '100'
+						s1, effect_startnum, effect_list = effect_edit(time, 'fade', effect_startnum, effect_list)
+						txt += ('lsp 7,"gui/sys_bg_white.png",0,0:print '+ s1 + ':csp 7:print ' + s1 + '\n')
 
-					#効果音停止
-					elif (kr_cmd == '効果音停止'):
-						pass #仮
+					#がくがく - 手抜き実装
+					elif (kr_cmd == 'がくがく'):
+						#yoko = str(d.get('横'))#横 0or5or10or15 めんどいので一律(onsでの)2
+						#tate = str(d.get('縦'))#縦 0or5or10or15 めんどいので一律(onsでの)2
+						time = str(d.get('time')) if d.get('time') else '250'
+						layer = str(d.get('layer')) if d.get('layer') else 'none'
 
-					#効果音停止待ち
-					elif (kr_cmd == '効果音停止待ち'):
-						pass #仮
+						#レイヤー指定時は立ち絵相手なのでそれ以外のときのみquake(立ち絵は余裕があれば後々実装するかも)
+						if layer == 'none': txt += ('quake 2,' + time + '\n')
+
+					#がくがく停止 - ons再現不可、無視
+					elif (kr_cmd == 'がくがく停止'):
+						if DEBUG_MODE: txt += (';' + line + '\n')
+
+					#音楽フェードオン - めんどいので無視
+					elif (kr_cmd == '音楽フェードオン'):
+						if DEBUG_MODE: txt += (';' + line + '\n')
+
+					#音楽フェードオフ - めんどいので無視
+					elif (kr_cmd == '音楽フェードオフ'):
+						if DEBUG_MODE: txt += (';' + line + '\n')
+
+					#セピア
+					elif (kr_cmd == 'セピア'):
+						txt += ('monocro #CC8888\n')
+
+					#色モードリセット
+					elif (kr_cmd == '色モードリセット'):
+						txt += ('monocro off\n')
+						
 
 
 
 
+					#立ち絵 -standは3まで 4はないよ
+					#;[stand name="min" costume="s" face="普" pose="1"]
+					#;[stand name="min" costume="s" face="呆" pose="1" 拡大="true"]
+					#;[stand3 name="min" costume="s" face="コミ" pose="1" page="fore"]
+					#;[stand2 横位置="700" name="ali" costume="m" face="無" pose="1" page="fore"]
+					elif (kr_cmd == 'stand'):
+						txt += ('\n')
+
+					#立ち絵横揺れ
+					#;[立ち絵横揺れ time="200" 回数="1" 加速度="-2"]
+					elif (kr_cmd == '立ち絵横揺れ'):
+						txt += ('\n')
+
+					#立ち絵縦揺れ
+					#;[立ち絵縦揺れ time="300" 回数="1" 加速度="-2" level="20"]
+					#;[立ち絵縦揺れ time="300" 回数="1" 加速度="-2" level="-16"]
+					elif (kr_cmd == '立ち絵縦揺れ'):
+						txt += ('\n')
+
+					#立ち絵2移動
+					#;[立ち絵2移動 加速度="-2" time="1000" 横位置="右"]
+					#;[立ち絵3移動 加速度="-2" time="600" 横位置="左"]
+					elif (kr_cmd == ''):
+						txt += ('\n')
+
+					#立ち絵2消去
+					#;[立ち絵2消去]
+					elif (kr_cmd == ''):
+						txt += ('\n')
+
+
+
+
+
+					#;[選択肢 caption="(ここに選択肢１, 同２)" target="(*select_00x_1,*select_00x_2)"]
+					#;[s]
+					#;[選択肢終了待ち]
+
+					#jump
+
+
+
+
+					#;[回想ここまで]
+					#;[回想ここから]
+
+
+
+					#eval
+					#フラグ
+
+
+
+
+
+
+					#全レイヤー消去
+					elif (kr_cmd == '全レイヤー消去'):
+						txt += ('csp -1\n')
+
+					#ウィンドウ表示 - onsは勝手にやるので無効化しても問題なし
+					elif (kr_cmd == 'ウィンドウ表示'):
+						if DEBUG_MODE: txt += (';' + line + '\n')
+
+					#ウィンドウ消去 - onsは勝手にやるので無効化しても問題なし
+					elif (kr_cmd == 'ウィンドウ消去'):
+						if DEBUG_MODE: txt += (';' + line + '\n')
+
+					#シナリオ開始 - 無効化しても問題なし
+					elif (kr_cmd == 'シナリオ開始'):
+						if DEBUG_MODE: txt += (';' + line + '\n')
+
+					#シナリオ終了 - 無効化しても問題なし
+					elif (kr_cmd == 'シナリオ終了'):
+						if DEBUG_MODE: txt += (';' + line + '\n')
 
 					#その他 - とりあえず表示(多分ない)
 					else:
@@ -280,7 +582,7 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 
 				#krkr側ラベル - とりあえずコメントアウト
 				elif (line[0] == r'*'):
-					txt += (';' + line + '\n')
+					if DEBUG_MODE: txt += (';' + line + '\n')
 
 				#命令以外
 				else:
@@ -299,7 +601,7 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 		if e[1] == 'fade':
 			add0txt_effect +='effect '+str(i)+',10,'+e[0]+'\n'
 		else:
-			add0txt_effect +='effect '+str(i)+',18,'+e[0]+',"data/rule/'+str(e[1]).replace('"','')+'.png"\n'
+			add0txt_effect +='effect '+str(i)+',18,'+e[0]+',"rule/'+str(e[1]).replace('"','')+'.png"\n'
 	txt = txt.replace(r';<<-EFFECT->>', add0txt_effect)
 
 
@@ -321,36 +623,22 @@ def main():
 
 	#デバッグ時はtestディレクトリ直下
 	if debug: same_hierarchy = (same_hierarchy / '_test')
-
-
-	#デバッグ用自動展開(本当は通常利用向けにも実装したほうがいいんだが…)
-	if debug:
-		td = (Path.cwd()/ '_test' / 'data')
-		pv = (Path.cwd()/ '_test' / '処女回路PV.wmv')
-
-		if not td.exists():
-			td.mkdir(parents=True)
-			sp.run([r'C:\_software\_zisaku\NSC2ONS4PSP\tools\Garbro_console\GARbro.Console.exe',
-				 'x', '-if', 'png', '-ca', '-o', td,
-				 r'D:\__game_tmp\otome_c_trial\処女回路_体験版\data.xp3'], shell=True )
-		if not pv.exists():
-			shutil.copy(r'D:\__game_tmp\otome_c_trial\処女回路_体験版\処女回路PV.wmv', pv)
 		
 	
 	#利用するパスを辞書に入れ一括代入
 	PATH_DICT = {
 		#先に準備しておくべきファイル一覧
 		'data' :(same_hierarchy / 'data'),
-		'bg' :(same_hierarchy / 'data' / 'bg'),
-		'bgm' :(same_hierarchy / 'data' / 'bgm'),
-		'ev' :(same_hierarchy / 'data' / 'ev'),
-		'face' :(same_hierarchy / 'data' / 'face'),
-		'gui' :(same_hierarchy / 'data' / 'gui'),
-		'rule' :(same_hierarchy / 'data' / 'rule'),
-		'scenario' :(same_hierarchy / 'data' / 'scenario'),
-		'se' :(same_hierarchy / 'data' / 'se'),
-		'stand' :(same_hierarchy / 'data' / 'stand'),
-		'voice' :(same_hierarchy / 'data' / 'voice'),
+		'bg' :(same_hierarchy / 'bg'),
+		'bgm' :(same_hierarchy / 'bgm'),
+		'ev' :(same_hierarchy / 'ev'),
+		'face' :(same_hierarchy / 'face'),
+		'gui' :(same_hierarchy / 'gui'),
+		'rule' :(same_hierarchy / 'rule'),
+		'scenario' :(same_hierarchy / 'scenario'),
+		'se' :(same_hierarchy / 'se'),
+		'stand' :(same_hierarchy / 'stand'),
+		'voice' :(same_hierarchy / 'voice'),
 		
 	}
 
@@ -388,7 +676,6 @@ main()
 #KIRIKIRI2ONS_Moviendo-otomec
 
 
-#パッチ修正箇所:s_001_prologue.ks
-#間接 → 関節
-
-#[x] 文字前 →name消去?
+#-todo-
+#setcursor
+#hシーンスキップ実装
