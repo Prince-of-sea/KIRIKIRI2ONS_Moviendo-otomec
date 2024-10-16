@@ -6,24 +6,86 @@
 
 ## 再現度
 原作との主な違いは以下
+ - 左下の顔画像表示がかなり適当、更新されなかったりそもそも出なかったり
  - セーブ/ロード画面は超簡略化
 
 ## 使い方
-※[修正パッチ](https://web.archive.org/web/20160923014453fw_/http://lapislazuli-svr.sakura.ne.jp/movi_d/otm_rev_1_1.zip)は使わなくても問題ありません
  1. 適当な作業フォルダを作成
- 2. [GARBro](https://drive.google.com/file/d/1gH9nNRxaz8GexN0B1hWyUc3o692bkWXX/view)でdata.xp3を作業フォルダへ展開<br>
+ 2. [GARBro](https://drive.google.com/file/d/1gH9nNRxaz8GexN0B1hWyUc3o692bkWXX/view)で**patch.xp3を除く**(そもそもない場合は無視)すべてのxp3を作業フォルダへ展開<br>
 
      設定は以下の通り↓<br>
      ![](image1.png)
 
-     エラーが出ると思いますが無視してください↓<br>
-     ![](image2.png)
-
  3. 展開先のディレクトリで[このコンバータ](https://github.com/Prince-of-sea/KIRIKIRI2ONS_Moviendo-otomec/releases/latest)をDL/起動させ変換(一瞬で終わります)<br>
     変換前の時点で以下のような構成になっていればOKです↓<br>
 ```
+C:.
+│  KIRIKIRI2ONS.exe
+│  
+├─bg
+│      bg_並木_夕.png
+│      (～略)
+│      bg_風呂2_暗.png
+│      
+├─bgm
+│      bgm_ed.ogg
+│      (～略)
+│      bgm_s_04.ogg
+│      
+├─data
+│  │  startup.tjs
+│  │  
+│  └─system
+│          AfterInit.tjs
+│          (～略)
+│          YesNoDialog.tjs
+│          
+├─ev
+│      ev_0_0.png
+│      (～略)
+│      ev_9_2.png
+│      
+├─face
+│      face_ali_1_h_微笑.png
+│      (～略)
+│      face_sal_2_y_考.png
+│      
+├─fg
+│      fg_effect_hikari_1.png
+│      (～略)
+│      fg_effect_魔方陣1.png
+│      
+├─gui
+│      font12px.tft
+│      (～略)
+│      _sys_title_btani_a.png
+│      
+├─rule
+│      rule_3d_ガラス.png
+│      (～略)
+│      rule_高速接近2.png
+│      
+├─scenario
+│      first.ks
+│      (～略)
+│      s_003_end_sala.ks
+│      
+├─se
+│      SE11.ogg
+│      (～略)
+│      _sys_se_onenter2.wav
+│      
+├─stand
+│      stand_ali_1_h_微笑.png
+│      (～略)
+│      stand_tb_sal_2_y_考.png
+│      
+└─voice
+        ALI_A1_001.ogg
+        (～略)
+        SAL_A1_799.ogg
 ```
- 1. ウィンドウが消え、0.txtができれば完成<br>
+ 4. ウィンドウが消え、0.txtができれば完成<br>
     exe等の不要データを削除し、変換済みファイルと共に利用ハードへ転送
 
 ## 注意事項
