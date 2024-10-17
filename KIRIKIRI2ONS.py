@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 from PIL import Image
 from pathlib import Path
-import concurrent.futures
-import subprocess as sp
 import shutil, re
 
 def default_txt():
@@ -34,6 +32,7 @@ numalias min,192
 numalias sal,193
 
 
+;自分でもstrかnum用か把握してない立ち絵用の奴
 numalias stand1name   ,160
 numalias stand1costume,161
 numalias stand1face   ,162
@@ -65,15 +64,12 @@ defsub voplay
 defsub sestopwait
 defsub stand
 defsub tatireset
+defsub def_select
 
 game
 ;----------------------------------------
 ;立ち絵周り全般
 *stand
-	;[stand name="min" costume="s" face="普" pose="1"]
-	;[stand name="min" costume="s" face="呆" pose="1" 拡大="true"]
-	;[stand3 name="min" costume="s" face="コミ" pose="1" page="fore"]
-	;[stand2 横位置="700" name="ali" costume="m" face="無" pose="1" page="fore"]
 	;横位置 - None,左,右,中,数字ベタ書き(700とか)
 	;未指定のものは前回指定から引き継ぎ、という判定みたい
 	;一回だけlevel="-20"とかいうのある
@@ -85,17 +81,10 @@ game
 	if $0!="" goto *standskip01
 	;ここから立ち絵呼び出し
 
-	;stand "",21,"sal","y","普","1","true","0",0,0,0,0,0
-	;stand "",22,"ali","m","無","1","","0",0,0,0,0,0
-
-	;stand_ali_1_m_驚.png
-	;stand_tb_ali_1_m_無.png
-
 	;拡大(引き継ぎ保存されず)
 	if $6!="" mov $15,"tb_"
 	if $6=="" mov $15,""
 
-	
 	;stand1
 	if $2!="" if %1==21 mov $stand1name,$2
 	if $3!="" if %1==21 mov $stand1costume,$3
@@ -103,10 +92,10 @@ game
 	if $5!="" if %1==21 mov $stand1pose,$5
 	if $12!="" if %1==21 mov %stand1top,%12
 
-	if $7=="左" if %1==21 mov %stand1yoko,-200
-	if $7=="右" if %1==21 mov %stand1yoko,200
+	if $7=="左" if %1==21 mov %stand1yoko,-154
+	if $7=="右" if %1==21 mov %stand1yoko,154
 	if $7=="中" if %1==21 mov %stand1yoko,0
-	if %1==21 if $7!="左" if $7!="右" if $7!="中" if $7!="" if $7!="0"  atoi %7,$7:mov %stand1yoko,%7
+	if %1==21 if $7!="左" if $7!="右" if $7!="中" if $7!="" if $7!="0"  atoi %7,$7:mov %stand1yoko,%stand1yoko+%7
 
 	if %1==21 mov $19,"stand/stand_"+$15+$stand1name+"_"+$stand1pose+"_"+$stand1costume+"_"+$stand1face+".png"
 	if %1==21 lsp %1,$19,%stand1yoko,%stand1top:print 9
@@ -119,10 +108,10 @@ game
 	if $5!="" if %1==22 mov $stand2pose,$5
 	if $12!="" if %1==22 mov %stand2top,%12
 
-	if $7=="左" if %1==22 mov %stand2yoko,-200
-	if $7=="右" if %1==22 mov %stand2yoko,200
+	if $7=="左" if %1==22 mov %stand2yoko,-154
+	if $7=="右" if %1==22 mov %stand2yoko,154
 	if $7=="中" if %1==22 mov %stand2yoko,0
-	if %1==22 if $7!="左" if $7!="右" if $7!="中" if $7!="" if $7!="0"  atoi %7,$7:mov %stand2yoko,%7
+	if %1==22 if $7!="左" if $7!="右" if $7!="中" if $7!="" if $7!="0"  atoi %7,$7:mov %stand2yoko,%stand2yoko+%7
 
 	if %1==22 mov $19,"stand/stand_"+$15+$stand2name+"_"+$stand2pose+"_"+$stand2costume+"_"+$stand2face+".png"
 	if %1==22 lsp %1,$19,%stand2yoko,%stand2top:print 9
@@ -135,10 +124,10 @@ game
 	if $5!="" if %1==23 mov $stand3pose,$5
 	if $12!="" if %1==23 mov %stand3top,%12
 
-	if $7=="左" if %1==23 mov %stand3yoko,-200
-	if $7=="右" if %1==23 mov %stand3yoko,200
+	if $7=="左" if %1==23 mov %stand3yoko,-154
+	if $7=="右" if %1==23 mov %stand3yoko,154
 	if $7=="中" if %1==23 mov %stand3yoko,0
-	if %1==23 if $7!="左" if $7!="右" if $7!="中" if $7!="" if $7!="0"  atoi %7,$7:mov %stand3yoko,%7
+	if %1==23 if $7!="左" if $7!="右" if $7!="中" if $7!="" if $7!="0"  atoi %7,$7:mov %stand3yoko,%stand3yoko+%7
 
 	if %1==23 mov $19,"stand/stand_"+$15+$stand3name+"_"+$stand3pose+"_"+$stand3costume+"_"+$stand3face+".png"
 	if %1==23 lsp %1,$19,%stand3yoko,%stand3top:print 9
@@ -265,22 +254,22 @@ game
 	if %1==23 mov %17,%stand3yoko:mov %18,%stand3top
 
 	;1
-	if $7=="左" if %1==21 mov %stand1yoko,-200
-	if $7=="右" if %1==21 mov %stand1yoko,200
+	if $7=="左" if %1==21 mov %stand1yoko,-154
+	if $7=="右" if %1==21 mov %stand1yoko,154
 	if $7=="中" if %1==21 mov %stand1yoko,0
-	if %1==21 if $7!="左" if $7!="右" if $7!="中" if $7!="" if $7!="0" atoi %7,$7:mov %stand1yoko,%7
+	if %1==21 if $7!="左" if $7!="右" if $7!="中" if $7!="" if $7!="0" atoi %7,$7:mov %stand1yoko,%stand1yoko+%7
 
 	;2
-	if $7=="左" if %1==22 mov %stand2yoko,-200
-	if $7=="右" if %1==22 mov %stand2yoko,200
+	if $7=="左" if %1==22 mov %stand2yoko,-154
+	if $7=="右" if %1==22 mov %stand2yoko,154
 	if $7=="中" if %1==22 mov %stand2yoko,0
-	if %1==22 if $7!="左" if $7!="右" if $7!="中" if $7!="" if $7!="0" atoi %7,$7:mov %stand2yoko,%7
+	if %1==22 if $7!="左" if $7!="右" if $7!="中" if $7!="" if $7!="0" atoi %7,$7:mov %stand2yoko,%stand2yoko+%7
 
 	;3
-	if $7=="左" if %1==23 mov %stand3yoko,-200
-	if $7=="右" if %1==23 mov %stand3yoko,200
+	if $7=="左" if %1==23 mov %stand3yoko,-154
+	if $7=="右" if %1==23 mov %stand3yoko,154
 	if $7=="中" if %1==23 mov %stand3yoko,0
-	if %1==23 if $7!="左" if $7!="右" if $7!="中" if $7!="" if $7!="0" atoi %7,$7:mov %stand3yoko,%7
+	if %1==23 if $7!="左" if $7!="右" if $7!="中" if $7!="" if $7!="0" atoi %7,$7:mov %stand3yoko,%stand3yoko+%7
 	
 	resettimer
 
@@ -458,7 +447,6 @@ return
 	if $sename=="sys_se_onenter2" mov %1,207
 	if $sename=="sys_se_slider" mov %1,18
 	if $sename=="sys_se_slider2" mov %1,22
-
 	*sestopwait_loop
 		gettimer %2
 		if %2>=%1 goto *sestopwait_end
@@ -467,9 +455,43 @@ return
 
 	*sestopwait_end
 return
+
+;以下ワンコとリリーコンバータから一部流用
+*def_select
+	getparam $1,$2,$3,$4
+	mov %1,0:mov %3,0
+	
+	setwindow 180,215,20,2,24,24,0,38, 0,1,1,#FFFFFF,0,0,799,599
+	;選択肢背景
+	lsp 16,":a/3,0,3;gui/sys_selecter_bt.png",120,240
+	lsp 17,":a/3,0,3;gui/sys_selecter_bt.png",120,300
+	;メッセージウィンドウ偽装
+	lsp 19,"gui/sys_textwindow_bg.png",0,343:print 1
+
+	select $1,*ss1,
+	       $3,*ss3
+
+	*ss1
+		mov %1,1:goto *ssend
+	*ss3
+		mov %3,1
+
+	*ssend
+	setwindow 190,480,24,3,24,24,0,5,10,1,1,"gui/sys_textwindow_bg.png",0,343
+	csp 16:csp 17:csp 19:print 1
+	
+	if %1==1 return $2
+	if %3==1 return $4
+	
+	;エラー時終了用end
+end
 ;----------------------------------------
 *start
 setwindow 190,480,24,3,24,24,0,5,10,1,1,"gui/sys_textwindow_bg.png",0,343
+
+
+;debug - hシーンスキップ仮
+mov %300,1
 
 bg black,1
 goto *SYS_MAIN_KS
@@ -483,7 +505,7 @@ end
 def krcmd2krdict(c):
 	kr_dict = {}
 
-	for p in re.findall(r'([A-z0-9-_]+?|横位置|縦位置|拡大|回数|加速度)=(["|”|″](.*?)["|”|″]|([^\t\s]+))', c):
+	for p in re.findall(r'([A-z0-9-_]+?|横位置|縦位置|拡大|回数|加速度|横|縦)=(["|”|″](.*?)["|”|″]|([^\t\s]+))', c):
 		kr_dict[p[0]] = p[2] if p[2] else p[3]
 
 	return kr_dict
@@ -531,6 +553,7 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 	#if文変換時に使うgotoの連番
 	if_goto_cnt = 10
 	end_goto_cnt = 10
+	h_skip_cnt = 10
 
 	effect_startnum = 10
 	effect_list = []
@@ -560,6 +583,7 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 		#if入った際にelseの行き先とか突っ込んどく - 配列にすることでif内ifに対応
 		if_list = []
 		end_list = []
+		h_skip_stack = 0
 
 		#iscript
 		mode_iscript = False
@@ -751,8 +775,19 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 						time = str(d.get('time')) if d.get('time') else '250'
 						layer = str(d.get('layer')) if d.get('layer') else 'none'
 
-						#レイヤー指定時は立ち絵相手なのでそれ以外のときのみquake(立ち絵は余裕があれば後々実装するかも)
-						if layer == 'none': txt += ('quake 2,' + time + '\n')
+						#通常時quake
+						if layer == 'none':
+							txt += ('quake 2,' + time + '\n')
+
+						#レイヤー指定時は立ち絵相手
+						else:
+							#立ち絵横揺れで代用(ホントは縦にも揺れるんだけどね)
+							time = str(d.get('time')).replace(r'"','') if d.get('time') else '250'
+							layer_ = str(24-int(layer)) #3→21 2→22 1→23 なので
+							level = str(d.get('横'))
+							count = str(int(int(time)/75))#50msで一回
+
+							txt += ('stand "横揺れ",' + layer_ + ',"","","","","","0",' + level + ',75,' + count + ',0,0\n')
 
 					#がくがく停止 - ons再現不可、無視
 					elif (kr_cmd == 'がくがく停止'):
@@ -810,8 +845,6 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 						if d.get('top'): top = d.get('top').replace(r'"','')
 						elif d.get('縦位置'): top = d.get('縦位置').replace(r'"','')
 						else: top = '0'
-						#page = d.get('page') if d.get('page') else '' #つかわなそう
-						if st_eff[2]=='移動': print(d)
 
 						#stand $命令,%sp番号,$名,$服,$顔,$ポーズ,$拡大,%横位置,%level,%time,%回数,%加速度,%top
 						txt += ('stand "' + st_eff[2] + '",' + lsp_num + ',"","","","","","' + yoko_ + '",' + level + ',' + time + ',' + count + ',' + accel + ',' + top + '\n')
@@ -867,10 +900,25 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 						cap_ma = re.match(r'\((.+?), (.+?)\)', d['caption']) #caption
 						tg_ma = re.match(r'\((\*[A-z0-9-_]+?),(\*[A-z0-9-_]+?)\)', d['target']) #target
 
-						txt += ('select "' + cap_ma[1] + '",' + tg_ma[1] + ',"' + cap_ma[2] + '",' + tg_ma[2] + '\n')
+						txt += ('def_select "' + cap_ma[1] + '","' + tg_ma[1] + '","' + cap_ma[2] + '","' + tg_ma[2] + '"\n')
 
-					#;[回想ここまで]
-					#;[回想ここから]
+					#回想ここから
+					elif (kr_cmd == '回想ここから'):
+						if h_skip_stack == 0:
+							h_skip_stack = h_skip_cnt
+							txt += ('if %300!=0 strsp 0,"ｓｃｅｎｅ　ｓｋｉｐ．．．",400,550,20,1,24,24,2,3,0,1:print 10:wait 2000:goto *h_skip_' + str(h_skip_stack) + '\n')
+						else:
+							print('ERROR: h_skip start')
+
+					#回想ここまで
+					elif (kr_cmd == '回想ここまで'):
+						if h_skip_stack != 0:
+							txt += ('*h_skip_' + str(h_skip_stack) + '\n')
+							txt += ('if %300!=0 csp 0:print 10\n')
+							h_skip_stack = 0
+							h_skip_cnt += 1
+						else:
+							print('ERROR: h_skip end')
 
 					#全レイヤー消去
 					elif (kr_cmd == '全レイヤー消去'):
@@ -934,6 +982,7 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 		
 		#ifスタック消費しきってない場合バグなので表示
 		if if_list != []: print('ERROR: if_conv ',if_list)
+		if h_skip_stack != 0: print('ERROR: h_skip_conv ',if_list)
 	
 	
 	add0txt_effect = ''
@@ -942,34 +991,8 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 			add0txt_effect +='effect '+str(i)+',10,'+e[0]+'\n'
 		else:
 			add0txt_effect +='effect '+str(i)+',18,'+e[0]+',"rule/'+str(e[1]).replace('"','')+'.png"\n'
+
 	txt = txt.replace(r';<<-EFFECT->>', add0txt_effect)
-
-
-	#ガ バ ガ バ 編 集 (相対パスと絶対パスの取り違えミス？ようわからん)
-	txt = txt.replace('''stand "移動",21,"","","","","","150",0,500,0,-3,0
-stand "停止待ち",21,"","","","","","0",0,250,0,0,0
-stand "移動",21,"","","","","","150",0,500,0,-3,0
-stand "停止待ち",21,"","","","","","0",0,250,0,0,0
-stand "移動",21,"","","","","","150",0,500,0,-3,0
-stand "停止待ち",21,"","","","","","0",0,250,0,0,0
-stand "移動",21,"","","","","","150",0,500,0,-3,0
-''','''stand "移動",21,"","","","","","350",0,500,0,-3,0
-stand "停止待ち",21,"","","","","","0",0,250,0,0,0
-stand "移動",21,"","","","","","500",0,500,0,-3,0
-stand "停止待ち",21,"","","","","","0",0,250,0,0,0
-stand "移動",21,"","","","","","650",0,500,0,-3,0
-stand "停止待ち",21,"","","","","","0",0,250,0,0,0
-stand "移動",21,"","","","","","800",0,500,0,-3,0
-''')
-	
-	txt = txt.replace('''stand "移動",21,"","","","","","-300",0,1000,0,-3,0
-stand "停止待ち",21,"","","","","","0",0,250,0,0,0
-stand "移動",21,"","","","","","-300",0,1000,0,-3,0
-''','''stand "移動",21,"","","","","","500",0,1000,0,-3,0
-stand "停止待ち",21,"","","","","","0",0,250,0,0,0
-stand "移動",21,"","","","","","200",0,1000,0,-3,0
-''')
-
 
 	#出力結果を書き込み
 	open(zero_txt, 'w', errors='ignore').write(txt)
@@ -1043,5 +1066,7 @@ main()
 
 
 #-todo-
-#setcursor
-#hシーンスキップ実装
+# setcursor
+# タイトル
+# スタッフロール
+# そもそもいい加減原作普通にプレイしろよ(爆)
