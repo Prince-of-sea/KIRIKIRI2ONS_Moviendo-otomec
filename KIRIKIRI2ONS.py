@@ -52,11 +52,24 @@ numalias stand3pose   ,183
 numalias stand3yoko   ,184
 numalias stand3top    ,185
 
+stralias se_one,"se/sys_se_onenter.wav"
+stralias se_onc,"se/sys_se_onclick.wav"
+stralias se_onc2,"se/sys_se_onenter2.wav"
 
+effect  6,18,750,"rule/rule_out2in.png"
+effect  7,18,500,"rule/rule_out2in.png"
+effect  8,18,500,"rule/rule_雲1.png"
 effect  9,10,100
 effect 10,10,500
 ;<<-EFFECT->>
 
+;sys_se_onclick - 起動menuの選択
+;sys_se_onenter - 触れた時
+;sys_se_onenter2 - 終了しますかyesnoとか
+
+menuselectvoice "","",se_one,se_onc,"",se_onc2,se_onc2
+
+defsub setwin
 defsub facereset
 defsub msgName
 defsub seplay
@@ -68,6 +81,14 @@ defsub def_select
 
 game
 ;----------------------------------------
+;setwindow簡略化
+*setwin
+	getparam %1
+	if %1==1 setwindow 190,480,24,3,24,24,0,5,10,1,1,"gui/sys_textwindow_bg.png",0,343
+	if %1==2 setwindow 180,215,20,2,24,24,0,38, 0,1,1,#FFFFFF,0,0,799,599
+return
+
+
 ;立ち絵周り全般
 *stand
 	;横位置 - None,左,右,中,数字ベタ書き(700とか)
@@ -461,7 +482,7 @@ return
 	getparam $1,$2,$3,$4
 	mov %1,0:mov %3,0
 	
-	setwindow 180,215,20,2,24,24,0,38, 0,1,1,#FFFFFF,0,0,799,599
+	setwin 2
 	;選択肢背景
 	lsp 16,":a/3,0,3;gui/sys_selecter_bt.png",120,240
 	lsp 17,":a/3,0,3;gui/sys_selecter_bt.png",120,300
@@ -477,7 +498,7 @@ return
 		mov %3,1
 
 	*ssend
-	setwindow 190,480,24,3,24,24,0,5,10,1,1,"gui/sys_textwindow_bg.png",0,343
+	setwin 1
 	csp 16:csp 17:csp 19:print 1
 	
 	if %1==1 return $2
@@ -487,16 +508,273 @@ return
 end
 ;----------------------------------------
 *start
-setwindow 190,480,24,3,24,24,0,5,10,1,1,"gui/sys_textwindow_bg.png",0,343
-
-
-;debug - hシーンスキップ仮
-mov %300,1
-
 bg black,1
+
+;debug
+bg white,1
+
+;文字スプライト読み込み→即削除 - 低スペック機でビットマップフォントを使った際ここで長めのロードが入る
+lsph 0,":s/24,24,0;#ffffffてすと",1000,1000:csp 0:print 1
+
+;se_one,"se/sys_se_onenter.wav"- 起動menuの選択
+;se_onc,"se/sys_se_onclick.wav"- 触れた時
+;se_onc2,"se/sys_se_onenter2.wav"- 終了しますかyesnoとか
+
+;ここ全部lsp200以上で組むこと
+
+dwave 1,se_onc2:setwin 1:goto *scenario_start
+;dwave 1,se_onc2:gosub *load_menu
+;dwave 1,se_onc2:gosub *extra_menu
+;dwave 1,se_onc2:goto *volmenu_GUI
+;dwave 1,se_onc2:gosub *end_menu
+
+;debug
+click
+
+end
+;----------------------------------------
+*scenario_start
+
+lsp 198 "gui/_sys_dialog_base.png",0,0:print 6
+lsp 197 "gui/sys_bg_black.png",0,0:print 6
+csp -1:bg black 1:wait 500
 goto *SYS_MAIN_KS
 
 end
+;----------------------------------------
+*load_menu
+
+lsp 199,"gui/sys_common_bg.png",0,0
+print 8
+wait 100
+
+systemcall load
+csp 199
+print 8
+return
+;----------------------------------------
+*extra_menu
+
+lsp 199,"gui/sys_common_bg.png",0,0
+lsp 198,"gui/_sys_dialog_base.png",0,0
+print 8
+wait 100
+
+strsp 197,"未実装です",400-(26*5)/2,300-(24/2),20,1,24,24,2,3,0,1
+print 9
+click
+
+csp 197
+print 9
+
+csp 198:csp 199
+print 8
+return
+;----------------------------------------
+*volmenu_GUI
+	;https://gist.github.com/Prince-of-sea/325b8ae6912ecf23316a71c3d008480c
+	;文字/数字/スプライト/ボタン
+	;全部130~159までを使ってます - 競合に注意
+	
+	;バー文字列定義
+	mov $130,":s;#FFFFFF#666666○――――――――――"
+	mov $131,":s;#FFFFFF#666666―○―――――――――"
+	mov $132,":s;#FFFFFF#666666――○――――――――"
+	mov $133,":s;#FFFFFF#666666―――○―――――――"
+	mov $134,":s;#FFFFFF#666666――――○――――――"
+	mov $135,":s;#FFFFFF#666666―――――○―――――"
+	mov $136,":s;#FFFFFF#666666――――――○――――"
+	mov $137,":s;#FFFFFF#666666―――――――○―――"
+	mov $138,":s;#FFFFFF#666666――――――――○――"
+	mov $139,":s;#FFFFFF#666666―――――――――○―"
+	mov $140,":s;#FFFFFF#666666――――――――――○"
+
+	lsp 199,"gui/sys_common_bg.png",0,0
+	print 8
+	wait 100
+
+	lsp 198,"gui/_sys_dialog_base.png",0,0
+	print 9
+	
+*volmenu_loop
+	;取得
+	getbgmvol   %130
+	getsevol    %131
+	getvoicevol %132
+	
+	;文字列変換
+	itoa2 $141,%130
+	itoa2 $142,%131
+	itoa2 $143,%132
+	
+	;バー代入
+	if %130==  0 mov $146,$130
+	if %130== 10 mov $146,$131
+	if %130== 20 mov $146,$132
+	if %130== 30 mov $146,$133
+	if %130== 40 mov $146,$134
+	if %130== 50 mov $146,$135
+	if %130== 60 mov $146,$136
+	if %130== 70 mov $146,$137
+	if %130== 80 mov $146,$138
+	if %130== 90 mov $146,$139
+	if %130==100 mov $146,$140
+	if %131==  0 mov $147,$130
+	if %131== 10 mov $147,$131
+	if %131== 20 mov $147,$132
+	if %131== 30 mov $147,$133
+	if %131== 40 mov $147,$134
+	if %131== 50 mov $147,$135
+	if %131== 60 mov $147,$136
+	if %131== 70 mov $147,$137
+	if %131== 80 mov $147,$138
+	if %131== 90 mov $147,$139
+	if %131==100 mov $147,$140
+	if %132==  0 mov $148,$130
+	if %132== 10 mov $148,$131
+	if %132== 20 mov $148,$132
+	if %132== 30 mov $148,$133
+	if %132== 40 mov $148,$134
+	if %132== 50 mov $148,$135
+	if %132== 60 mov $148,$136
+	if %132== 70 mov $148,$137
+	if %132== 80 mov $148,$138
+	if %132== 90 mov $148,$139
+	if %132==100 mov $148,$140
+
+	;シーンスキップ
+	if %300==1 mov $153,"ＯＮ"
+	if %300==0 mov $153,"ＯＦＦ"
+	
+	;画面作成
+	lsp 130,":s;#FFFFFF［Ｃｏｎｆｉｇ］", 50, 50
+	lsp 131,":s;#FFFFFF#666666リセット", 400,550
+	lsp 132,":s;#FFFFFF#666666戻る",     550,550
+	
+	lsp 135,":s;#FFFFFFＢＧＭ",           50,150
+	lsp 136,":s;#FFFFFF#666666＜",       200,150
+	lsp 137,$146,                        250,150
+	lsp 138,":s;#FFFFFF#666666＞",       550,150
+	lsp 139,":s;#FFFFFF#666666"+$141,    600,150
+	
+	lsp 140,":s;#FFFFFFＳＥ",             50,250
+	lsp 141,":s;#FFFFFF#666666＜",       200,250
+	lsp 142,$147,                        250,250
+	lsp 143,":s;#FFFFFF#666666＞",       550,250
+	lsp 144,":s;#FFFFFF#666666"+$142,    600,250
+	
+	lsp 145,":s;#FFFFFFＶＯＩＣＥ",       50,350
+	lsp 146,":s;#FFFFFF#666666＜",       200,350
+	lsp 147,$148,                        250,350
+	lsp 148,":s;#FFFFFF#666666＞",       550,350
+	lsp 149,":s;#FFFFFF#666666"+$143,    600,350
+
+	lsp 155,":s;#FFFFFFＨシーンスキップ",   50,450
+	lsp 156,":s;#FFFFFF#666666【ＯＮ】",   300,450
+	lsp 158,":s;#FFFFFF#666666【ＯＦＦ】", 400,450
+	lsp 159,":s;#FFFFFF#666666"+$153,     600,450
+
+	print 1
+	
+	;ボタン定義
+	bclear
+	spbtn 131,131
+	spbtn 132,132
+	spbtn 136,136
+	spbtn 138,138
+	spbtn 141,141
+	spbtn 143,143
+	spbtn 146,146
+	spbtn 148,148
+	spbtn 156,156
+	spbtn 158,158
+	
+	;入力待ち
+	btnwait %140
+	
+	if %140==131 dwave 1,se_onc2:bgmvol 100:sevol 100:voicevol 100:mov %300,0
+	if %140==132 dwave 1,se_onc2:csp -1:reset
+	if %140==136 dwave 1,se_onc2:if %130!=  0 sub %130,10:bgmvol %130
+	if %140==138 dwave 1,se_onc2:if %130!=100 add %130,10:bgmvol %130
+	if %140==141 dwave 1,se_onc2:if %131!=  0 sub %131,10:sevol %131
+	if %140==143 dwave 1,se_onc2:if %131!=100 add %131,10:sevol %131
+	if %140==146 dwave 1,se_onc2:if %132!=  0 sub %132,10:voicevol %132
+	if %140==148 dwave 1,se_onc2:if %132!=100 add %132,10:voicevol %132
+	if %140==156 dwave 1,se_onc2:mov %300,1
+	if %140==158 dwave 1,se_onc2:mov %300,0
+	
+goto *volmenu_loop
+;----------------------------------------
+*end_menu
+
+lsp 199,"gui/_sys_dialog_base.png",0,0
+print 9
+
+lsp 198,"gui/sys_dialog_bg.png",0,0
+lsp 197,":a/3,0,3;gui/sys_dialog_bt_yes.png",288,218
+lsp 196,":a/3,0,3;gui/sys_dialog_bt_no.png" ,425,218
+strsp 195,"ゲームを終了しますか？",400-(26*11)/2,334,20,1,24,24,2,3,0,1
+print 7
+
+*endmenu_loop
+	;ボタン定義
+	bclear
+	spbtn 197,197
+	spbtn 196,196
+
+	;入力待ち
+	btnwait %190
+
+	if %190==197 dwave 1,se_onc2:wait 300:end
+	if %190==196 dwave 1,se_onc2:csp 199:csp 198:csp 197:csp 196:csp 195:print 1:return
+goto *endmenu_loop
+end
+;----------------------------------------
+*SYS_STAFFROLL_KS
+;スタッフロール無理に変換せずにこっちで作っちゃおうという
+csp -1
+
+;%150 再生時間
+;%151 ロール画像x - 使わん
+;%152 ロール画像y
+;%153 gettimer
+;%154 下記参照
+
+lsp 80,"gui/sys_staffroll_fg.png",0,0
+lsp 82,"gui/sys_staffroll_bg.png",0,0
+print 10
+wait 500
+
+lsp 81,"gui/sys_staffroll_text.png",0,0
+getspsize 81,%151,%152
+
+;最初無画面スタートなので+600
+add %152,600
+
+;bgm_edの再生時間
+mov %150,121570
+bgm "bgm/bgm_ed.ogg"
+
+resettimer
+
+*staffroll_loop
+	gettimer %153
+
+	if %153>%150 mov %153,%150
+	
+	;(経過時間/再生時間)*ロール画像y
+	mov %154,%153*%152/%150
+	
+	if %153<=%150 amsp 81,0,600-%154:print 1
+	if %153==%150 bgmstop:goto *staffroll_end
+goto *staffroll_loop
+*staffroll_end
+
+wait 1000
+csp -1
+print 10
+
+return
 ;----------------------------------------
 '''
 	return s
