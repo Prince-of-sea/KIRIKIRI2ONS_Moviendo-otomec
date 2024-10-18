@@ -543,6 +543,8 @@ lsp 290,"gui/sys_rinrilogo_1.png",0,0:print 10:wait 2000
 lsp 290,"gui/sys_rinrilogo_2.png",0,0:print 10:wait 2000
 lsp 290,"gui/sys_bg_white.png",0,0:print 10:wait 500
 
+;bgm
+bgm "bgm/bgm_s_01.ogg"
 
 ;ランダム背景
 rnd %0,24
