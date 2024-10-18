@@ -52,20 +52,22 @@ numalias stand3pose   ,183
 numalias stand3yoko   ,184
 numalias stand3top    ,185
 
+
+;se_one,"se/sys_se_onenter.wav"- 起動menuの選択
+;se_onc,"se/sys_se_onclick.wav"- 触れた時
+;se_onc2,"se/sys_se_onenter2.wav"- 終了しますかyesnoとか
+
 stralias se_one,"se/sys_se_onenter.wav"
 stralias se_onc,"se/sys_se_onclick.wav"
 stralias se_onc2,"se/sys_se_onenter2.wav"
 
-effect  6,18,750,"rule/rule_out2in.png"
-effect  7,18,500,"rule/rule_out2in.png"
-effect  8,18,500,"rule/rule_雲1.png"
-effect  9,10,100
-effect 10,10,500
+effect  5,18,1000,"rule/rule_両側ブラインド2.png"
+effect  6,18, 750,"rule/rule_out2in.png"
+effect  7,18, 500,"rule/rule_out2in.png"
+effect  8,18, 500,"rule/rule_雲1.png"
+effect  9,10, 100
+effect 10,10, 500
 ;<<-EFFECT->>
-
-;sys_se_onclick - 起動menuの選択
-;sys_se_onenter - 触れた時
-;sys_se_onenter2 - 終了しますかyesnoとか
 
 menuselectvoice "","",se_one,se_onc,"",se_onc2,se_onc2
 
@@ -78,7 +80,8 @@ defsub sestopwait
 defsub stand
 defsub tatireset
 defsub def_select
-
+defsub btani_vsp0_all
+defsub btani_csp_all
 game
 ;----------------------------------------
 ;setwindow簡略化
@@ -506,38 +509,213 @@ return
 	
 	;エラー時終了用end
 end
+
+
+*btani_vsp0_all
+	vsp 200,0:vsp 201,0:vsp 202,0:vsp 203,0:vsp 204,0:vsp 205,0:vsp 206,0:vsp 207,0:vsp 208,0:vsp 209,0:vsp 210,0:vsp 211,0:vsp 212,0:vsp 213,0:vsp 214,0:vsp 215,0
+	vsp 216,0:vsp 217,0:vsp 218,0:vsp 219,0:vsp 220,0:vsp 221,0:vsp 222,0:vsp 223,0:vsp 224,0:vsp 225,0:vsp 226,0:vsp 227,0:vsp 228,0:vsp 229,0:vsp 230,0:vsp 231,0
+	vsp 232,0:vsp 233,0:vsp 234,0:vsp 235,0:vsp 236,0:vsp 237,0:vsp 238,0:vsp 239,0:vsp 240,0:vsp 241,0:vsp 242,0:vsp 243,0:vsp 244,0:vsp 245,0:vsp 246,0:vsp 247,0
+return
+
+*btani_csp_all
+	csp 200:csp 201:csp 202:csp 203:csp 204:csp 205:csp 206:csp 207:csp 208:csp 209:csp 210:csp 211:csp 212:csp 213:csp 214:csp 215
+	csp 216:csp 217:csp 218:csp 219:csp 220:csp 221:csp 222:csp 223:csp 224:csp 225:csp 226:csp 227:csp 228:csp 229:csp 230:csp 231
+	csp 232:csp 233:csp 234:csp 235:csp 236:csp 237:csp 238:csp 239:csp 240:csp 241:csp 242:csp 243:csp 244:csp 245
+	;246は最終結果なので取っておく
+return
 ;----------------------------------------
 *start
 bg black,1
 
-;debug
-bg white,1
-
 ;文字スプライト読み込み→即削除 - 低スペック機でビットマップフォントを使った際ここで長めのロードが入る
+mov %301,0:resettimer
 lsph 0,":s/24,24,0;#ffffffてすと",1000,1000:csp 0:print 1
 
-;se_one,"se/sys_se_onenter.wav"- 起動menuの選択
-;se_onc,"se/sys_se_onclick.wav"- 触れた時
-;se_onc2,"se/sys_se_onenter2.wav"- 終了しますかyesnoとか
 
-;ここ全部lsp200以上で組むこと
+;↑の読み込みに750ms以上かかった場合低スペック機と判定
+gettimer %140
+if %140>750 mov %301,1
 
-dwave 1,se_onc2:setwin 1:goto *scenario_start
-;dwave 1,se_onc2:gosub *load_menu
-;dwave 1,se_onc2:gosub *extra_menu
-;dwave 1,se_onc2:goto *volmenu_GUI
-;dwave 1,se_onc2:gosub *end_menu
 
-;debug
-click
+;2秒ごとに初期画面
+lsp 290,"gui/sys_circlelogo_bg.png",0,0:print 10:wait 2000
+lsp 290,"gui/sys_rinrilogo_1.png",0,0:print 10:wait 2000
+lsp 290,"gui/sys_rinrilogo_2.png",0,0:print 10:wait 2000
+lsp 290,"gui/sys_bg_white.png",0,0:print 10:wait 500
 
-end
+
+;ランダム背景
+rnd %0,24
+if %0==0  lsp 290,"bg/bg_並木_夕.png",0,0
+if %0==1  lsp 290,"bg/bg_並木_夜.png",0,0
+if %0==2  lsp 290,"bg/bg_並木_昼.png",0,0
+if %0==3  lsp 290,"bg/bg_公園_夕.png",0,0
+if %0==4  lsp 290,"bg/bg_公園_夕光.png",0,0
+if %0==5  lsp 290,"bg/bg_公園_昼.png",0,0
+if %0==6  lsp 290,"bg/bg_商店街_夕1.png",0,0
+if %0==7  lsp 290,"bg/bg_商店街_夕2.png",0,0
+if %0==8  lsp 290,"bg/bg_商店街_夜.png",0,0
+if %0==9  lsp 290,"bg/bg_商店街_昼.png",0,0
+if %0==10 lsp 290,"bg/bg_商店街_朝.png",0,0
+if %0==11 lsp 290,"bg/bg_居間_夕.png",0,0
+if %0==12 lsp 290,"bg/bg_居間_夜.png",0,0
+if %0==13 lsp 290,"bg/bg_居間_昼.png",0,0
+if %0==14 lsp 290,"bg/bg_研究室_夕.png",0,0
+if %0==15 lsp 290,"bg/bg_研究室_夜.png",0,0
+if %0==16 lsp 290,"bg/bg_研究室_昼.png",0,0
+if %0==17 lsp 290,"bg/bg_空_夕.png",0,0
+if %0==18 lsp 290,"bg/bg_空_夜.png",0,0
+if %0==19 lsp 290,"bg/bg_空_昼.png",0,0
+if %0==20 lsp 290,"bg/bg_部屋_夕.png",0,0
+if %0==21 lsp 290,"bg/bg_部屋_夜.png",0,0
+if %0==22 lsp 290,"bg/bg_部屋_昼.png",0,0
+if %0==23 lsp 290,"bg/bg_部屋_朝.png",0,0
+print 10
+
+
+;上からロゴ
+lsp 287,"gui/sys_title_fg_logo.png",0,0
+lsp 289,"gui/sys_title_fg_logo_shadow.png",0,0
+
+resettimer
+*logo_loop
+	gettimer %140
+	if %140>2000 mov %140,2000
+	
+	amsp 287,0,-20+(20*%140/2000)
+	amsp 289,0,0,128*%140/2000
+	print 1
+
+	if %140==2000 goto *logoloop_end
+goto *logo_loop
+*logoloop_end
+
+
+;ボタンアニメーション演出を先に一括読み込み - 低スペック機の場合奇数は間引く
+;PSPだとRAM足りなそうだからと無理やり編み出した苦肉の策(効果あるかは知らん)
+lsph 200 "gui/sys_title_btani_a_0.png" ,0,0
+if %301!=1 lsph 201 "gui/sys_title_btani_a_1.png" ,0,0
+lsph 202 "gui/sys_title_btani_a_2.png" ,0,0
+if %301!=1 lsph 203 "gui/sys_title_btani_a_3.png" ,0,0
+lsph 204 "gui/sys_title_btani_a_4.png" ,0,0
+if %301!=1 lsph 205 "gui/sys_title_btani_a_5.png" ,0,0
+lsph 206 "gui/sys_title_btani_a_6.png" ,0,0
+if %301!=1 lsph 207 "gui/sys_title_btani_a_7.png" ,0,0
+lsph 208 "gui/sys_title_btani_a_8.png" ,0,0
+if %301!=1 lsph 209 "gui/sys_title_btani_a_9.png" ,0,0
+lsph 210 "gui/sys_title_btani_a_10.png",0,0
+if %301!=1 lsph 211 "gui/sys_title_btani_a_11.png",0,0
+lsph 212 "gui/sys_title_btani_a_12.png",0,0
+if %301!=1 lsph 213 "gui/sys_title_btani_a_13.png",0,0
+lsph 214 "gui/sys_title_btani_a_14.png",0,0
+if %301!=1 lsph 215 "gui/sys_title_btani_a_15.png",0,0
+lsph 216 "gui/sys_title_btani_a_16.png",0,0
+if %301!=1 lsph 217 "gui/sys_title_btani_a_17.png",0,0
+lsph 218 "gui/sys_title_btani_a_18.png",0,0
+if %301!=1 lsph 219 "gui/sys_title_btani_a_19.png",0,0
+lsph 220 "gui/sys_title_btani_a_20.png",0,0
+if %301!=1 lsph 221 "gui/sys_title_btani_a_21.png",0,0
+lsph 222 "gui/sys_title_btani_a_22.png",0,0
+if %301!=1 lsph 223 "gui/sys_title_btani_a_23.png",0,0
+lsph 224 "gui/sys_title_btani_a_24.png",0,0
+if %301!=1 lsph 225 "gui/sys_title_btani_a_25.png",0,0
+lsph 226 "gui/sys_title_btani_a_26.png",0,0
+if %301!=1 lsph 227 "gui/sys_title_btani_a_27.png",0,0
+lsph 228 "gui/sys_title_btani_a_28.png",0,0
+if %301!=1 lsph 229 "gui/sys_title_btani_a_29.png",0,0
+lsph 230 "gui/sys_title_btani_a_30.png",0,0
+;if %301!=1 lsph 231 "gui/sys_title_btani_a_31.png",0,0
+lsph 232 "gui/sys_title_btani_a_32.png",0,0
+if %301!=1 lsph 233 "gui/sys_title_btani_a_33.png",0,0
+lsph 234 "gui/sys_title_btani_a_34.png",0,0
+if %301!=1 lsph 235 "gui/sys_title_btani_a_35.png",0,0
+lsph 236 "gui/sys_title_btani_a_36.png",0,0
+if %301!=1 lsph 237 "gui/sys_title_btani_a_37.png",0,0
+lsph 238 "gui/sys_title_btani_a_38.png",0,0
+if %301!=1 lsph 239 "gui/sys_title_btani_a_39.png",0,0
+lsph 240 "gui/sys_title_btani_a_40.png",0,0
+if %301!=1 lsph 241 "gui/sys_title_btani_a_41.png",0,0
+lsph 242 "gui/sys_title_btani_a_42.png",0,0
+if %301!=1 lsph 243 "gui/sys_title_btani_a_43.png",0,0
+lsph 244 "gui/sys_title_btani_a_44.png",0,0
+if %301!=1 lsph 245 "gui/sys_title_btani_a_45.png",0,0
+lsph 246 "gui/sys_title_btani_a_46.png",0,0
+;if %301!=1 lsph 247 "gui/sys_title_btani_a_47.png",0,0
+
+resettimer
+*btani_loop
+	gettimer %140
+	if %140>3000 mov %140,3000
+	
+	mov %180,199+(48*%140/3000)
+	
+	;低スペック機は負荷軽減のため画像間引いて2の倍数に
+	if %301==1 mov %180,(%180/2)*2
+	
+	;31と47は無なので
+	if %180==231 mov %180,230
+	if %180==247 mov %180,246
+
+	;初回(200)は既に出てるので無視、それ以後
+	if %180!=200 btani_vsp0_all:vsp %180,1:print 1
+	
+	if %140==3000 goto *btaniloop_end
+goto *btani_loop
+*btaniloop_end
+btani_csp_all
+
+
+;仮枠
+lsp 288,"gui/sys_title_fg_main.png":print 10
+wait 500
+
+
+;枠&ロゴを差し替え
+csp 287:csp 288:csp 289
+lsp 280,"gui/sys_title_bg.png":print 5
+
+
+;ボタン
+csp 246
+lsp 251,":a/3,0,3;gui/sys_title_bt_start.png"  ,317,337
+lsp 252,":a/3,0,3;gui/sys_title_bt_load.png"   ,146,384
+lsp 253,":a/3,0,3;gui/sys_title_bt_extra.png"  ,317,384
+lsp 254,":a/3,0,3;gui/sys_title_bt_config.png" ,488,384
+lsp 255,":a/3,0,3;gui/sys_title_bt_close.png"  ,317,431
+
+;ボタン説明
+lsph 271 "gui/sys_title_cap_start.png" ,255,530
+lsph 272 "gui/sys_title_cap_load.png"  ,255,530
+lsph 273 "gui/sys_title_cap_extra.png" ,255,530
+lsph 274 "gui/sys_title_cap_config.png",255,530
+lsph 275 "gui/sys_title_cap_end.png"   ,255,530
+print 1
+
+*endmenu_loop
+	;ボタン定義
+	bclear
+	exbtn_d       "C271C272C273C274C275"
+	exbtn 251,251,"P271C272C273C274C275"
+	exbtn 252,252,"C271P272C273C274C275"
+	exbtn 253,253,"C271C272P273C274C275"
+	exbtn 254,254,"C271C272C273P274C275"
+	exbtn 255,255,"C271C272C273C274P275"
+
+	;入力待ち
+	btnwait %190
+
+	if %190==251 dwave 1,se_onc2:goto *scenario_start
+	if %190==252 dwave 1,se_onc2:gosub *load_menu
+	if %190==253 dwave 1,se_onc2:gosub *extra_menu
+	if %190==254 dwave 1,se_onc2:goto *volmenu_GUI
+	if %190==255 dwave 1,se_onc2:gosub *end_menu
+goto *endmenu_loop
 ;----------------------------------------
 *scenario_start
-
+setwin 1
 lsp 198 "gui/_sys_dialog_base.png",0,0:print 6
 lsp 197 "gui/sys_bg_black.png",0,0:print 6
-csp -1:bg black 1:wait 500
+csp -1:bg black 1:wait 500:stop
 goto *SYS_MAIN_KS
 
 end
@@ -556,18 +734,18 @@ return
 *extra_menu
 
 lsp 199,"gui/sys_common_bg.png",0,0
-lsp 198,"gui/_sys_dialog_base.png",0,0
 print 8
 wait 100
 
+lsp 198,"gui/_sys_dialog_base.png",0,0
 strsp 197,"未実装です",400-(26*5)/2,300-(24/2),20,1,24,24,2,3,0,1
 print 9
 click
 
-csp 197
+csp 197:csp 198
 print 9
 
-csp 198:csp 199
+csp 199
 print 8
 return
 ;----------------------------------------
@@ -819,9 +997,19 @@ def effect_edit(t,f,effect_startnum,effect_list):
 	return str(list_num),effect_startnum,effect_list
 
 
-#
+#画像変換
 def image_convert(PATH_DICT):
-	pass
+	btani_path = (PATH_DICT['gui'] / r'sys_title_btani_a.png')	
+	btani_im = Image.open(btani_path)
+
+	k = 0
+
+	#ここ並列にしようとするとim引数に突っ込んだタイミングでいくつか処理消えるのでしかたなくこの仕様
+	for i in range( int(btani_im.height / 600) ):
+		for j in range( int(btani_im.width / 800) ):
+			btani_im_crop = btani_im.crop( ((j*800), (i*600), ((j+1)*800), ((i+1)*600)) )
+			btani_im_crop.save( (PATH_DICT['gui'] / 'sys_title_btani_a_{k}.png'.format(k=k)))
+			k += 1
 	
 
 
@@ -1334,17 +1522,15 @@ def main():
 	text_cnv(debug, PATH_DICT2['0_txt'], PATH_DICT['scenario'])
 
 	#不要ファイル削除
-	#if not debug: shutil.rmtree(PATH_DICT['data'])
+	if not debug:
+		shutil.rmtree(PATH_DICT['data'])
+		shutil.rmtree(PATH_DICT['scenario'])
 
 
 main()
 
-
 #KIRIKIRI2ONS_Moviendo-otomec
 
-
 #-todo-
-# setcursor
-# タイトル
-# スタッフロール
+# setcursor → めんどいので廃止
 # そもそもいい加減原作普通にプレイしろよ(爆)
