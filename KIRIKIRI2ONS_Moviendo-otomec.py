@@ -480,10 +480,10 @@ return
 	*sestopwait_end
 return
 
-;以下ワンコとリリーコンバータから一部流用
+;選択肢UI - 以下ワンコとリリーコンバータから一部流用
 *def_select
-	getparam $1,$2,$3,$4
-	mov %1,0:mov %3,0
+	getparam $61,$62,$63,$64
+	mov %61,0:mov %63,0
 	
 	setwin 2
 	;選択肢背景
@@ -492,20 +492,13 @@ return
 	;メッセージウィンドウ偽装
 	lsp 19,"gui/sys_textwindow_bg.png",0,343:print 1
 
-	select $1,*ss1,
-	       $3,*ss3
+	select $61,*ss1,
+	       $63,*ss3
 
 	*ss1
-		mov %1,1:goto *ssend
+		setwin 1:csp 16:csp 17:csp 19:print 1:return $62
 	*ss3
-		mov %3,1
-
-	*ssend
-	setwin 1
-	csp 16:csp 17:csp 19:print 1
-	
-	if %1==1 return $2
-	if %3==1 return $4
+		setwin 1:csp 16:csp 17:csp 19:print 1:return $64
 	
 	;エラー時終了用end
 end
@@ -543,8 +536,61 @@ lsp 290,"gui/sys_rinrilogo_1.png",0,0:print 10:wait 2000
 lsp 290,"gui/sys_rinrilogo_2.png",0,0:print 10:wait 2000
 lsp 290,"gui/sys_bg_white.png",0,0:print 10:wait 500
 
+
 ;bgm
 bgm "bgm/bgm_s_01.ogg"
+
+
+;ボタンアニメーション演出を先に一括読み込み
+lsph 200 "gui/sys_title_btani_a_0.png" ,0,0
+lsph 201 "gui/sys_title_btani_a_1.png" ,0,0
+lsph 202 "gui/sys_title_btani_a_2.png" ,0,0
+lsph 203 "gui/sys_title_btani_a_3.png" ,0,0
+lsph 204 "gui/sys_title_btani_a_4.png" ,0,0
+lsph 205 "gui/sys_title_btani_a_5.png" ,0,0
+lsph 206 "gui/sys_title_btani_a_6.png" ,0,0
+lsph 207 "gui/sys_title_btani_a_7.png" ,0,0
+lsph 208 "gui/sys_title_btani_a_8.png" ,0,0
+lsph 209 "gui/sys_title_btani_a_9.png" ,0,0
+lsph 210 "gui/sys_title_btani_a_10.png",0,0
+lsph 211 "gui/sys_title_btani_a_11.png",0,0
+lsph 212 "gui/sys_title_btani_a_12.png",0,0
+lsph 213 "gui/sys_title_btani_a_13.png",0,0
+lsph 214 "gui/sys_title_btani_a_14.png",0,0
+lsph 215 "gui/sys_title_btani_a_15.png",0,0
+lsph 216 "gui/sys_title_btani_a_16.png",0,0
+lsph 217 "gui/sys_title_btani_a_17.png",0,0
+lsph 218 "gui/sys_title_btani_a_18.png",0,0
+lsph 219 "gui/sys_title_btani_a_19.png",0,0
+lsph 220 "gui/sys_title_btani_a_20.png",0,0
+lsph 221 "gui/sys_title_btani_a_21.png",0,0
+lsph 222 "gui/sys_title_btani_a_22.png",0,0
+lsph 223 "gui/sys_title_btani_a_23.png",0,0
+lsph 224 "gui/sys_title_btani_a_24.png",0,0
+lsph 225 "gui/sys_title_btani_a_25.png",0,0
+lsph 226 "gui/sys_title_btani_a_26.png",0,0
+lsph 227 "gui/sys_title_btani_a_27.png",0,0
+lsph 228 "gui/sys_title_btani_a_28.png",0,0
+lsph 229 "gui/sys_title_btani_a_29.png",0,0
+lsph 230 "gui/sys_title_btani_a_30.png",0,0
+;lsph 231 "gui/sys_title_btani_a_31.png",0,0
+lsph 232 "gui/sys_title_btani_a_32.png",0,0
+lsph 233 "gui/sys_title_btani_a_33.png",0,0
+lsph 234 "gui/sys_title_btani_a_34.png",0,0
+lsph 235 "gui/sys_title_btani_a_35.png",0,0
+lsph 236 "gui/sys_title_btani_a_36.png",0,0
+lsph 237 "gui/sys_title_btani_a_37.png",0,0
+lsph 238 "gui/sys_title_btani_a_38.png",0,0
+lsph 239 "gui/sys_title_btani_a_39.png",0,0
+lsph 240 "gui/sys_title_btani_a_40.png",0,0
+lsph 241 "gui/sys_title_btani_a_41.png",0,0
+lsph 242 "gui/sys_title_btani_a_42.png",0,0
+lsph 243 "gui/sys_title_btani_a_43.png",0,0
+lsph 244 "gui/sys_title_btani_a_44.png",0,0
+lsph 245 "gui/sys_title_btani_a_45.png",0,0
+lsph 246 "gui/sys_title_btani_a_46.png",0,0
+;lsph 247 "gui/sys_title_btani_a_47.png",0,0
+
 
 ;ランダム背景
 rnd %0,24
@@ -572,7 +618,6 @@ if %0==20 lsp 290,"bg/bg_部屋_夕.png",0,0
 if %0==21 lsp 290,"bg/bg_部屋_夜.png",0,0
 if %0==22 lsp 290,"bg/bg_部屋_昼.png",0,0
 if %0==23 lsp 290,"bg/bg_部屋_朝.png",0,0
-print 10
 
 
 ;上からロゴ
@@ -584,7 +629,7 @@ resettimer
 	gettimer %140
 	if %140>2000 mov %140,2000
 	
-	amsp 287,0,-20+(20*%140/2000)
+	amsp 287,0,-35+(35*%140/2000)
 	amsp 289,0,0,128*%140/2000
 	print 1
 
@@ -593,66 +638,14 @@ goto *logo_loop
 *logoloop_end
 
 
-;ボタンアニメーション演出を先に一括読み込み - 低スペック機の場合奇数は間引く
-;PSPだとRAM足りなそうだからと無理やり編み出した苦肉の策(効果あるかは知らん)
-lsph 200 "gui/sys_title_btani_a_0.png" ,0,0
-if %301!=1 lsph 201 "gui/sys_title_btani_a_1.png" ,0,0
-lsph 202 "gui/sys_title_btani_a_2.png" ,0,0
-if %301!=1 lsph 203 "gui/sys_title_btani_a_3.png" ,0,0
-lsph 204 "gui/sys_title_btani_a_4.png" ,0,0
-if %301!=1 lsph 205 "gui/sys_title_btani_a_5.png" ,0,0
-lsph 206 "gui/sys_title_btani_a_6.png" ,0,0
-if %301!=1 lsph 207 "gui/sys_title_btani_a_7.png" ,0,0
-lsph 208 "gui/sys_title_btani_a_8.png" ,0,0
-if %301!=1 lsph 209 "gui/sys_title_btani_a_9.png" ,0,0
-lsph 210 "gui/sys_title_btani_a_10.png",0,0
-if %301!=1 lsph 211 "gui/sys_title_btani_a_11.png",0,0
-lsph 212 "gui/sys_title_btani_a_12.png",0,0
-if %301!=1 lsph 213 "gui/sys_title_btani_a_13.png",0,0
-lsph 214 "gui/sys_title_btani_a_14.png",0,0
-if %301!=1 lsph 215 "gui/sys_title_btani_a_15.png",0,0
-lsph 216 "gui/sys_title_btani_a_16.png",0,0
-if %301!=1 lsph 217 "gui/sys_title_btani_a_17.png",0,0
-lsph 218 "gui/sys_title_btani_a_18.png",0,0
-if %301!=1 lsph 219 "gui/sys_title_btani_a_19.png",0,0
-lsph 220 "gui/sys_title_btani_a_20.png",0,0
-if %301!=1 lsph 221 "gui/sys_title_btani_a_21.png",0,0
-lsph 222 "gui/sys_title_btani_a_22.png",0,0
-if %301!=1 lsph 223 "gui/sys_title_btani_a_23.png",0,0
-lsph 224 "gui/sys_title_btani_a_24.png",0,0
-if %301!=1 lsph 225 "gui/sys_title_btani_a_25.png",0,0
-lsph 226 "gui/sys_title_btani_a_26.png",0,0
-if %301!=1 lsph 227 "gui/sys_title_btani_a_27.png",0,0
-lsph 228 "gui/sys_title_btani_a_28.png",0,0
-if %301!=1 lsph 229 "gui/sys_title_btani_a_29.png",0,0
-lsph 230 "gui/sys_title_btani_a_30.png",0,0
-;if %301!=1 lsph 231 "gui/sys_title_btani_a_31.png",0,0
-lsph 232 "gui/sys_title_btani_a_32.png",0,0
-if %301!=1 lsph 233 "gui/sys_title_btani_a_33.png",0,0
-lsph 234 "gui/sys_title_btani_a_34.png",0,0
-if %301!=1 lsph 235 "gui/sys_title_btani_a_35.png",0,0
-lsph 236 "gui/sys_title_btani_a_36.png",0,0
-if %301!=1 lsph 237 "gui/sys_title_btani_a_37.png",0,0
-lsph 238 "gui/sys_title_btani_a_38.png",0,0
-if %301!=1 lsph 239 "gui/sys_title_btani_a_39.png",0,0
-lsph 240 "gui/sys_title_btani_a_40.png",0,0
-if %301!=1 lsph 241 "gui/sys_title_btani_a_41.png",0,0
-lsph 242 "gui/sys_title_btani_a_42.png",0,0
-if %301!=1 lsph 243 "gui/sys_title_btani_a_43.png",0,0
-lsph 244 "gui/sys_title_btani_a_44.png",0,0
-if %301!=1 lsph 245 "gui/sys_title_btani_a_45.png",0,0
-lsph 246 "gui/sys_title_btani_a_46.png",0,0
-;if %301!=1 lsph 247 "gui/sys_title_btani_a_47.png",0,0
-
+;さっき読んだボタンアニメーション演出を再生
+print 10
 resettimer
 *btani_loop
 	gettimer %140
 	if %140>3000 mov %140,3000
 	
 	mov %180,199+(48*%140/3000)
-	
-	;低スペック機は負荷軽減のため画像間引いて2の倍数に
-	if %301==1 mov %180,(%180/2)*2
 	
 	;31と47は無なので
 	if %180==231 mov %180,230
@@ -705,6 +698,9 @@ print 1
 
 	;入力待ち
 	btnwait %190
+
+	;デバッグ用スタッフロールテスト
+	;if %190==251 dwave 1,se_onc2: gosub *SYS_STAFFROLL_KS:end
 
 	if %190==251 dwave 1,se_onc2:goto *scenario_start
 	if %190==252 dwave 1,se_onc2:gosub *load_menu
@@ -912,7 +908,7 @@ end
 ;----------------------------------------
 *SYS_STAFFROLL_KS
 ;スタッフロール無理に変換せずにこっちで作っちゃおうという
-csp -1
+csp -1:bg black,10:wait 1000
 
 ;%150 再生時間
 ;%151 ロール画像x - 使わん
@@ -928,9 +924,6 @@ wait 500
 lsp 81,"gui/sys_staffroll_text.png",0,0
 getspsize 81,%151,%152
 
-;最初無画面スタートなので+600
-add %152,600
-
 ;bgm_edの再生時間
 mov %150,121570
 bgm "bgm/bgm_ed.ogg"
@@ -945,7 +938,7 @@ resettimer
 	;(経過時間/再生時間)*ロール画像y
 	mov %154,%153*%152/%150
 	
-	if %153<=%150 amsp 81,0,600-%154:print 1
+	if %153<=%150 amsp 81,0,0-%154:print 1
 	if %153==%150 bgmstop:goto *staffroll_end
 goto *staffroll_loop
 *staffroll_end
@@ -1253,9 +1246,9 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 							time = str(d.get('time')).replace(r'"','') if d.get('time') else '250'
 							layer_ = str(24-int(layer)) #3→21 2→22 1→23 なので
 							level = str(d.get('横'))
-							count = str(int(int(time)/75))#50msで一回
+							count = str(int(int(time)/150))#100msで一回
 
-							txt += ('stand "横揺れ",' + layer_ + ',"","","","","","0",' + level + ',75,' + count + ',0,0\n')
+							txt += ('stand "横揺れ",' + layer_ + ',"","","","","","0",' + level + '*2,150,' + count + ',0,0\n')
 
 					#がくがく停止 - ons再現不可、無視
 					elif (kr_cmd == 'がくがく停止'):
@@ -1324,7 +1317,10 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 						cond = d.get('cond')
 
 						if cond: txt += ('if ' + str(cond).replace('f.','%') + ' ')
-						if target: txt += ('goto ' + target + '\n')
+						if target:
+							if target!='*skipstaff': txt += ('goto ' + target + '\n')
+							else: txt += (';' + line + '\n')
+							
 
 					#フラグ
 					elif (kr_cmd == 'フラグ'):
@@ -1356,7 +1352,7 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 					elif (kr_cmd == 'endif'):
 						s = ''
 						if if_list[-1] != 0: s += ('*go' + str(if_list[-1]) + '\n')
-						s += ('*ifend_' + str(end_list[-1]) + '\n')
+						#s += ('*ifend_' + str(end_list[-1]) + '\n')
 						
 						if_list.pop()
 						end_list.pop()
@@ -1434,8 +1430,12 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 					if line[:7] != '*label_':
 						kr_lb = re.match(r'(\*[A-z0-9-_]+)\|?(.+)?', line)
 				
-						#|手前のみ活かす ただしstartは無視
-						if kr_lb[1]!='*start': txt += (kr_lb[1] + '\n')
+						#|手前のみ活かす
+						if (kr_lb[1][:8]=='*select_') or (kr_lb[1]=='*end'):
+							txt += (kr_lb[1] + '\n')
+						else:
+							#print(line)
+							txt += (';' + line + '\n')
 					
 					else:
 						if DEBUG_MODE: txt += (';' + line + '\n')
@@ -1473,7 +1473,7 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 def main():
 
 	# デバッグモード
-	debug = 1
+	debug = 0
 
 	#同一階層のパスを変数へ代入
 	same_hierarchy = Path.cwd()
@@ -1530,9 +1530,3 @@ def main():
 
 
 main()
-
-#KIRIKIRI2ONS_Moviendo-otomec
-
-#-todo-
-# setcursor → めんどいので廃止
-# そもそもいい加減原作普通にプレイしろよ(爆)
