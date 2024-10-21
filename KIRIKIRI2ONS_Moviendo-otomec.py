@@ -926,7 +926,7 @@ getspsize 81,%151,%152
 
 ;bgm_edの再生時間
 mov %150,121570
-bgm "bgm/bgm_ed.ogg"
+bgmonce "bgm/bgm_ed.ogg"
 
 resettimer
 
@@ -1318,8 +1318,7 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 
 						if cond: txt += ('if ' + str(cond).replace('f.','%') + ' ')
 						if target:
-							if target!='*skipstaff': txt += ('goto ' + target + '\n')
-							else: txt += (';' + line + '\n')
+							txt += ('goto ' + target + '\n')
 							
 
 					#フラグ
@@ -1431,7 +1430,7 @@ def text_cnv(DEBUG_MODE, zero_txt, scenario):
 						kr_lb = re.match(r'(\*[A-z0-9-_]+)\|?(.+)?', line)
 				
 						#|手前のみ活かす
-						if (kr_lb[1][:8]=='*select_') or (kr_lb[1]=='*end'):
+						if (kr_lb[1][:8]=='*select_') or (kr_lb[1]=='*end') or (kr_lb[1]=='*skipstaff'):
 							txt += (kr_lb[1] + '\n')
 						else:
 							#print(line)
